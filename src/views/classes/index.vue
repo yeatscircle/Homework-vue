@@ -24,7 +24,7 @@
       >
         <el-table-column type="index" width="100" label="序号" header-align="center" align="center"></el-table-column>
         <el-table-column prop="name" label="班级名称" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="name" label="班级人数" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="number" label="班级人数" header-align="center" align="center"></el-table-column>
         <el-table-column label="最后操作时间" header-align="center" align="center">
           <template slot-scope="scope">
             {{ scope.row.updateTime ? scope.row.updateTime.replace('T', ' ') : '' }}
