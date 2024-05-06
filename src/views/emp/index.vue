@@ -128,7 +128,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column align="center" label="日职日期">
+        <el-table-column align="center" label="入职日期">
           <template slot-scope="scope">
             {{ scope.row.entrydate }}
           </template>
@@ -207,9 +207,9 @@ export default {
     this.page(); //当页面加载完成后，发送异步请求，获取数据
     findAll().then((result) => {
       this.deptList = result.data.data;
-      this.deptList.forEach(function(item) {
-        item.id = parseInt(item.id);
-      });
+      // this.deptList.forEach(function(item) {
+      //   item.id = parseInt(item.id);
+      // });
       console.log(this.deptList);
     });
   },

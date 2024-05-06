@@ -2,37 +2,37 @@ import request from '@/utils/request'
 
 export function findAll() {
   return request({
-    url: '/cla',
+    url: '/course',
     method: 'get'
   })
 }
 
-export function add(cla) {
+export function add(course) {
   return request({
-    url: '/cla',
+    url: '/course',
     method: 'post',
-    data: cla
+    data: course
   })
 }
 
-export function update(cla) {
+export function update(course) {
   return request({
-    url: '/cla',
+    url: '/course',
     method: 'put',
-    data: cla
+    data: course
   })
 }
 
 export function deleteById(id) {
   return request({
-    url: '/cla/' + id,
+    url: '/course/' + id,
     method: 'delete'
   })
 }
 
 export function selectById(id) {
   return request({
-    url: '/cla/' + id,
+    url: '/course/' + id,
     method: 'get'
   })
 }

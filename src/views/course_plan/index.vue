@@ -2,32 +2,42 @@
   <div class="app-container">
 
     <!--搜索表单-->
-    <el-form :inline="true" :model="searchStu" class="demo-form-inline">
-      <el-form-item label="姓名">
+    <el-form :inline="true" :model="searchEmp" class="demo-form-inline">
+      <el-form-item label="课程名称">
         <el-input
-          v-model="searchStu.name"
-          placeholder="请输入学生姓名"
+          v-model="searchEmp.name"
+          placeholder="请输入课程名称"
         ></el-input>
       </el-form-item>
-      <el-form-item label="性别">
-        <el-select v-model="searchStu.gender" placeholder="请选择">
-          <el-option label="男" value="1"></el-option>
-          <el-option label="女" value="2"></el-option>
+      <el-form-item label="课程序号">
+        <el-input
+          v-model="searchEmp.name"
+          placeholder="请输入课程序号"
+        ></el-input>
+      </el-form-item>
+
+      <el-form-item label="上课时间">
+        <el-select v-model="searchEmp.gender" placeholder="请选择">
+          <el-option label="周一" value="1"></el-option>
+          <el-option label="周二" value="2"></el-option>
+          <el-option label="周三" value="3"></el-option>
+          <el-option label="周四" value="4"></el-option>
+          <el-option label="周五" value="5"></el-option>
         </el-select>
       </el-form-item>
 
-      <el-form-item label="入学时间">
-        <el-date-picker
-          v-model="entrydate"
-          clearable
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          placeholder="选择日期"
+      <el-form-item label="开课时间">
+        <el-time-picker
+          is-range
+          v-model="classOpen"
           range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
+          placeholder="选择时间范围"
           style="width: 400px; margin-left: 20px"
-        ></el-date-picker>
+          format="HH:mm"
+          value-format="HH:mm"
+        ></el-time-picker>
       </el-form-item>
 
       <el-form-item>
@@ -37,22 +47,25 @@
     </el-form>
 
 
-
     <!--按钮-->
     <el-row>
       <el-button type="danger" size="medium" @click="deleteByIds">- 批量删除</el-button>
-      <el-button type="primary" size="medium" @click="dialogVisible = true; stu = { image: ''};" >+ 新增学生</el-button>
+      <el-button type="primary" size="medium" @click="dialogVisible = true; emp = { image: ''};" >+ 新增课程</el-button>
     </el-row>
 
     <!--添加数据对话框表单-->
-    <el-dialog ref="form" title="编辑学生" :visible.sync="dialogVisible" width="30%">
-      <el-form ref="form" :model="stu" label-width="80px" size="mini">
-        <el-form-item label="学生姓名">
-          <el-input v-model="stu.name"></el-input>
+    <el-dialog ref="form" title="编辑课程" :visible.sync="dialogVisible" width="30%">
+      <el-form ref="form" :model="emp" label-width="80px" size="mini">
+        <el-form-item label="课程名称">
+          <el-input v-model="emp.name"></el-input>
         </el-form-item>
 
-        <el-form-item label="性别" >
-          <el-select v-model="stu.gender" placeholder="请选择" style="width:100%" >
+        <el-form-item label="课程序号">
+          <el-input v-model="emp.name"></el-input>
+        </el-form-item>
+
+        <el-form-item label="开课时间" >
+          <el-select v-model="emp.gender" placeholder="请选择" style="width:100%" >
             <el-option
               v-for="item in genderList"
               :key="item.value"
@@ -62,45 +75,38 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="学生电话" prop="phone" :rules="[
-          { required: true, message: '请输入学生电话', trigger: 'blur' },
-          { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的11位手机号码', trigger: 'blur' }]">
-          <el-input v-model="stu.phone"></el-input>
-        </el-form-item>
 
-        <el-form-item label="照片">
-          <el-upload
-            class="avatar-uploader"
-            action="/api/upload"
-            :headers="token"
-            name="image"
-            :show-file-list="false"
-            :on-success="handleAvatarSuccess"
-            :before-upload="beforeAvatarUpload"
-          >
-            <img v-if="stu.image" :src="stu.image" class="avatar" />
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-          </el-upload>
-        </el-form-item>
-
-        <el-form-item label="入学日期">
-          <el-date-picker
-            v-model="stu.entrydate"
+        <el-form-item label="开课时段">
+          <el-time-picker
+            v-model="emp.entrydate"
             clearable
-            value-format="yyyy-MM-dd"
-            type="date"
-            placeholder="选择日期"
+            format="HH:mm"
+            value-format="HH:mm"
+            placeholder="选择时间"
             size="small"
             style="width:100%"
-          ></el-date-picker>
+          ></el-time-picker>
         </el-form-item>
 
-        <el-form-item label="班级序号">
-          <el-select v-model="stu.classId" placeholder="请选择" style="width:100%">
+        <el-form-item label="授课老师">
+          <el-select v-model="emp.deptId" placeholder="请选择" style="width:100%">
             <!--            <el-option label="学工部" value="1"></el-option>-->
             <!--            <el-option label="教研部" value="2"></el-option>-->
             <el-option
-              v-for="item in ClassList"
+              v-for="item in deptList"
+              :key="item.value"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="授课班级">
+          <el-select v-model="emp.deptId" placeholder="请选择" style="width:100%">
+            <!--            <el-option label="学工部" value="1"></el-option>-->
+            <!--            <el-option label="教研部" value="2"></el-option>-->
+            <el-option
+              v-for="item in deptList"
               :key="item.value"
               :label="item.name"
               :value="item.id"
@@ -120,27 +126,15 @@
     <template>
       <el-table :data="tableData" style="width: 100%" border @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55"  align="center"></el-table-column>
-        <el-table-column  prop="name"  label="姓名"  align="center"></el-table-column>
-        <el-table-column prop="image" label="照片" align="center">
-          <template slot-scope="{ row }">
-            <el-image style="width: auto; height: 40px; border: none; cursor: pointer" :src="row.image"></el-image>
-          </template>
-        </el-table-column>
+        <el-table-column  prop="name"  label="课程名称"  align="center"></el-table-column>
+        <el-table-column  prop="name"  label="课程序号"  align="center"></el-table-column>
+        <el-table-column  prop="name"  label="授课老师"  align="center"></el-table-column>
+        <el-table-column  prop="name"  label="授课班级"  align="center"></el-table-column>
+        <el-table-column  prop="name"  label="授课时间"  align="center"></el-table-column>
+        <el-table-column  prop="name"  label="授课时段"  align="center"></el-table-column>
+        <el-table-column  prop="name"  label="授课地点"  align="center"></el-table-column>
 
-        <el-table-column align="center" label="性别">
-          <template slot-scope="scope">
-            <span style="margin-right: 10px">
-            {{scope.row.gender == "1" ? "男" : "女"}}</span>
-          </template>
-        </el-table-column>
 
-        <el-table-column  prop="phone"  label="电话号码"  align="center"></el-table-column>
-
-        <el-table-column align="center" label="入学日期">
-          <template slot-scope="scope">
-            {{ scope.row.entrydate }}
-          </template>
-        </el-table-column>
         <el-table-column align="center" label="最后操作时间">
           <template slot-scope="scope">
             {{scope.row.updateTime ? scope.row.updateTime.replace('T',' '):''}}
@@ -171,8 +165,8 @@
 </template>
 
 <script>
-import { page, add, update, deleteById, selectById } from "@/api/stu.js";
-import { findAll } from "@/api/cla.js";
+import { page, add, update, deleteById, selectById } from "@/api/emp.js";
+import { findAll } from "@/api/dept.js";
 import { getToken } from '@/utils/auth';
 
 export default {
@@ -188,15 +182,14 @@ export default {
       // 添加数据对话框是否展示的标记
       dialogVisible: false,
       // 品牌模型数据
-      searchStu: {
+      searchEmp: {
         name: "",
         gender: "",
       },
-      stu: {
+      emp: {
         image: "",
       },
-      phone: "",
-      ClassList: [],
+      deptList: [],
       genderList: [{id: 1,name: "男"},{id: 2,name: "女"}],
       beginTime: "",
       endTime: "",
@@ -215,12 +208,11 @@ export default {
   mounted() {
     this.page(); //当页面加载完成后，发送异步请求，获取数据
     findAll().then((result) => {
-      this.ClassList = result.data.data;
-      // this.ClassList.forEach(function(item) {
-      //   console.log(this.ClassList);
+      this.deptList = result.data.data;
+      // this.deptList.forEach(function(item) {
       //   item.id = parseInt(item.id);
       // });
-      // console.log(this.ClassList);
+      console.log(this.deptList);
     });
   },
 
@@ -228,8 +220,8 @@ export default {
     // 查询分页数据
     page() {
       page(
-        this.searchStu.name,
-        this.searchStu.gender,
+        this.searchEmp.name,
+        this.searchEmp.gender,
         this.beginTime,
         this.endTime,
         this.currentPage,
@@ -252,7 +244,7 @@ export default {
     },
 
     clear(){
-      this.searchStu = {name: "", gender: ""};
+      this.searchEmp = {name: "", gender: ""};
       this.beginTime = "",
         this.endTime = "";
       this.entrydate = "";
@@ -260,36 +252,26 @@ export default {
     },
     // 添加数据
     add() {
-      this.$refs.form.validate((valid) => {
-        if (valid) {
-          alert('表单验证成功，提交数据!');
+      let operator;
 
-          // 只有当表单验证通过时，才进行下一步操作
-          let operator;
-          if (this.stu.id) {
-            // 修改
-            operator = update(this.stu);
-          } else {
-            // 添加
-            operator = add(this.stu);
-          }
-          operator.then((resp) => {
-            if (resp.data.code == "1") {
-              this.dialogVisible = false;
-              this.page();
-              this.$message({ message: "恭喜你，保存成功", type: "success" });
-              this.stu = { image: "" };
-            } else {
-              this.$message.error(resp.data.msg);
-            }
-          })
+      if (this.emp.id) {
+        //修改
+        operator = update(this.emp);
+      } else {
+        operator = add(this.emp);
+      }
+
+      operator.then((resp) => {
+        if (resp.data.code == "1") {
+          this.dialogVisible = false;
+          this.page();
+          this.$message({ message: "恭喜你，保存成功", type: "success" });
+          this.emp = { image: "" };
         } else {
-          alert('表单验证失败，请检查输入!');
-          return; // 这个 return 现在可以正确地阻止后续代码执行
+          this.$message.error(resp.data.msg);
         }
       });
     },
-
     update(id) {
       //1. 打开窗口
       this.dialogVisible = true;
@@ -297,9 +279,9 @@ export default {
 
       selectById(id).then((result) => {
         if (result.data.code === 1) {
-          this.stu = result.data.data;
-          console.log(this.stu.gender);
-          this.stu;
+          this.emp = result.data.data;
+          console.log(this.emp.gender);
+          this.emp;
         }
       });
     },
@@ -376,7 +358,7 @@ export default {
 
     //文件上传相关
     handleAvatarSuccess(res, file) {
-      this.stu.image = res.data;
+      this.emp.image = res.data;
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === "image/jpeg";

@@ -50,7 +50,7 @@ export const constantRoutes = [
         meta: { title: '学员管理', icon: 'el-icon-user-solid' }
       }
     ]
-  }, 
+  },
   {
     path: '/system',
     component: Layout,
@@ -72,8 +72,27 @@ export const constantRoutes = [
       }
     ]
   },
-
- 
+  {
+    path: '/course',
+    component: Layout,
+    redirect: '/course',
+    name: 'Course',
+    meta: { title: '课程信息管理', icon: 'el-icon-s-tools' },
+    children: [
+      {
+        path: 'course-management',
+        name: 'course-management',
+        component: () => import('@/views/course'),
+        meta: { title: '课程管理', icon: 'el-icon-menu' }
+      },
+      {
+        path: 'emp',
+        name: 'Emp',
+        component: () => import('@/views/course_plan'),
+        meta: { title: '课程安排', icon: 'el-icon-user-solid' }
+      }
+    ]
+  },
   {
     path: '/report',
     component: Layout,
@@ -95,8 +114,6 @@ export const constantRoutes = [
       }
     ]
   },
-
- 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

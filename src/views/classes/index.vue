@@ -6,7 +6,7 @@
       <el-button
         style="float: right"
         type="primary"
-        @click="dialogFormVisible = true; dept={}"
+        @click="dialogFormVisible = true; cla={}"
       >+ 新增班级
       </el-button
       >
@@ -58,9 +58,9 @@
     <!-- 新建对话框 -->
 
     <el-dialog title="保存班级" :visible.sync="dialogFormVisible">
-      <el-form :model="dept">
+      <el-form :model="cla">
         <el-form-item label="班级名称" :label-width="formLabelWidth">
-          <el-input v-model="dept.name" placeholder="请输入班级名称" autocomplete="off"></el-input>
+          <el-input v-model="cla.name" placeholder="请输入班级名称" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
 
@@ -79,8 +79,8 @@ export default {
   data() {
     return {
       formLabelWidth: '120px',
-      dialogFormVisible: false, //控制对话框是否可见
-      dept: {
+      dialogFormVisible: false,
+      cla: {
         name: '',
         number: ''
       },
@@ -98,7 +98,7 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteById(id).then((result) => {
-          if (result.data.code == 1) {
+          if (result.data.code === 1) {
             this.$message({
               message: '恭喜你，删除成功',
               type: 'success'
@@ -121,17 +121,17 @@ export default {
     selectById(id) {
       this.dialogFormVisible = true
       selectById(id).then((result) => {
-        this.dept = result.data.data
+        this.cla = result.data.data
       })
     },
 
     //保存方法
     add() {
       let method// 添加
-      if (this.dept.id) {
-        method = update(this.dept) // 修改
+      if (this.cla.id) {
+        method = update(this.cla) // 修改
       } else {
-        method = add(this.dept) //添加
+        method = add(this.cla) //添加
       }
       method.then((result) => {
         if (result.data.code == 1) {
