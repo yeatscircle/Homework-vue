@@ -128,6 +128,8 @@
           </template>
         </el-table-column>
 
+        <el-table-column prop="deptId" label="部门" align="center" :formatter="formatDeptName"></el-table-column>
+
         <el-table-column align="center" label="入职日期">
           <template slot-scope="scope">
             {{ scope.row.entrydate }}
@@ -202,6 +204,15 @@ export default {
       token: {token: getToken()}
     };
   },
+  computed: {
+    deptMap() {
+      const map = {};
+      this.deptList.forEach(item => {
+        map[item.id] = item.name;
+      });
+      return map;
+    }
+  },
 
   mounted() {
     this.page(); //当页面加载完成后，发送异步请求，获取数据
@@ -233,6 +244,9 @@ export default {
     // 复选框选中后执行的方法
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+    formatDeptName(row) {
+      return this.deptMap[row.deptId];
     },
 
     // 查询方法

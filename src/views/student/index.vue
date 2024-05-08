@@ -97,8 +97,6 @@
 
         <el-form-item label="班级序号">
           <el-select v-model="stu.classId" placeholder="请选择" style="width:100%">
-            <!--            <el-option label="学工部" value="1"></el-option>-->
-            <!--            <el-option label="教研部" value="2"></el-option>-->
             <el-option
               v-for="item in ClassList"
               :key="item.value"
@@ -133,6 +131,7 @@
             {{scope.row.gender == "1" ? "男" : "女"}}</span>
           </template>
         </el-table-column>
+        <el-table-column prop="classId" label="班级" align="center" :formatter="formatClassName"></el-table-column>
 
         <el-table-column  prop="phone"  label="电话号码"  align="center"></el-table-column>
 
@@ -211,6 +210,15 @@ export default {
       token: {token: getToken()}
     };
   },
+  computed: {
+    classMap() {
+      const map = {};
+      this.ClassList.forEach(item => {
+        map[item.id] = item.name;
+      });
+      return map;
+    }
+  },
 
   mounted() {
     this.page(); //当页面加载完成后，发送异步请求，获取数据
@@ -243,6 +251,9 @@ export default {
     // 复选框选中后执行的方法
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+    formatClassName(row) {
+      return this.classMap[row.classId];
     },
 
     // 查询方法

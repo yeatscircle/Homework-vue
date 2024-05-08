@@ -2,22 +2,22 @@
   <div class="app-container">
 
     <!--搜索表单-->
-    <el-form :inline="true" :model="searchEmp" class="demo-form-inline">
+    <el-form :inline="true" :model="searchCourse" class="demo-form-inline">
       <el-form-item label="课程名称">
         <el-input
-          v-model="searchEmp.name"
+          v-model="searchCourse.name"
           placeholder="请输入课程名称"
         ></el-input>
       </el-form-item>
       <el-form-item label="课程序号">
         <el-input
-          v-model="searchEmp.name"
+          v-model="searchCourse .serialNumber"
           placeholder="请输入课程序号"
         ></el-input>
       </el-form-item>
 
       <el-form-item label="上课时间">
-        <el-select v-model="searchEmp.gender" placeholder="请选择">
+        <el-select v-model="searchCourse.week" placeholder="请选择">
           <el-option label="周一" value="1"></el-option>
           <el-option label="周二" value="2"></el-option>
           <el-option label="周三" value="3"></el-option>
@@ -29,7 +29,7 @@
       <el-form-item label="开课时间">
         <el-time-picker
           is-range
-          v-model="classOpen"
+          v-model="timePeriod"
           range-separator="至"
           start-placeholder="开始时间"
           end-placeholder="结束时间"
@@ -47,27 +47,22 @@
     </el-form>
 
 
-    <!--按钮-->
-    <el-row>
-      <el-button type="danger" size="medium" @click="deleteByIds">- 批量删除</el-button>
-      <el-button type="primary" size="medium" @click="dialogVisible = true; emp = { image: ''};" >+ 新增课程</el-button>
-    </el-row>
 
     <!--添加数据对话框表单-->
     <el-dialog ref="form" title="编辑课程" :visible.sync="dialogVisible" width="30%">
-      <el-form ref="form" :model="emp" label-width="80px" size="mini">
+      <el-form ref="form" :model="course" label-width="80px" size="mini">
         <el-form-item label="课程名称">
-          <el-input v-model="emp.name"></el-input>
+          <el-input v-model="course.name"></el-input>
         </el-form-item>
 
         <el-form-item label="课程序号">
-          <el-input v-model="emp.name"></el-input>
+          <el-input v-model="course.serialNumber"></el-input>
         </el-form-item>
 
         <el-form-item label="开课时间" >
-          <el-select v-model="emp.gender" placeholder="请选择" style="width:100%" >
+          <el-select v-model="course.week" placeholder="请选择" style="width:100%" >
             <el-option
-              v-for="item in genderList"
+              v-for="item in weekList"
               :key="item.value"
               :label="item.name"
               :value="item.id"
@@ -78,7 +73,7 @@
 
         <el-form-item label="开课时段">
           <el-time-picker
-            v-model="emp.entrydate"
+            v-model="course.timePeriod"
             clearable
             format="HH:mm"
             value-format="HH:mm"
@@ -89,11 +84,11 @@
         </el-form-item>
 
         <el-form-item label="授课老师">
-          <el-select v-model="emp.deptId" placeholder="请选择" style="width:100%">
+          <el-select v-model="course.teacherLst" placeholder="请选择" style="width:100%">
             <!--            <el-option label="学工部" value="1"></el-option>-->
             <!--            <el-option label="教研部" value="2"></el-option>-->
             <el-option
-              v-for="item in deptList"
+              v-for="item in teacherLst"
               :key="item.value"
               :label="item.name"
               :value="item.id"
@@ -102,11 +97,11 @@
         </el-form-item>
 
         <el-form-item label="授课班级">
-          <el-select v-model="emp.deptId" placeholder="请选择" style="width:100%">
+          <el-select v-model="course.classId" placeholder="请选择" style="width:100%">
             <!--            <el-option label="学工部" value="1"></el-option>-->
             <!--            <el-option label="教研部" value="2"></el-option>-->
             <el-option
-              v-for="item in deptList"
+              v-for="item in classList"
               :key="item.value"
               :label="item.name"
               :value="item.id"
@@ -127,12 +122,12 @@
       <el-table :data="tableData" style="width: 100%" border @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55"  align="center"></el-table-column>
         <el-table-column  prop="name"  label="课程名称"  align="center"></el-table-column>
-        <el-table-column  prop="name"  label="课程序号"  align="center"></el-table-column>
+        <el-table-column  prop="serialNumber"  label="课程序号"  align="center"></el-table-column>
         <el-table-column  prop="name"  label="授课老师"  align="center"></el-table-column>
-        <el-table-column  prop="name"  label="授课班级"  align="center"></el-table-column>
-        <el-table-column  prop="name"  label="授课时间"  align="center"></el-table-column>
-        <el-table-column  prop="name"  label="授课时段"  align="center"></el-table-column>
-        <el-table-column  prop="name"  label="授课地点"  align="center"></el-table-column>
+        <el-table-column  prop="classId"  label="授课班级"  align="center"></el-table-column>
+        <el-table-column  prop="week"  label="授课时间"  align="center"></el-table-column>
+        <el-table-column  prop="timePeriod"  label="授课时段"  align="center"></el-table-column>
+        <el-table-column  prop="location"  label="授课地点"  align="center"></el-table-column>
 
 
         <el-table-column align="center" label="最后操作时间">
@@ -165,11 +160,17 @@
 </template>
 
 <script>
-import { page, add, update, deleteById, selectById } from "@/api/emp.js";
-import { findAll } from "@/api/dept.js";
+import { page, update,selectById,add} from "@/api/coursePlan.js";
+import { findAll } from "@/api/cla.js";
 import { getToken } from '@/utils/auth';
+import course from '@/views/course/index.vue'
 
 export default {
+  computed: {
+    course() {
+      return course
+    }
+  },
   data() {
     return {
       background: true,
@@ -182,18 +183,21 @@ export default {
       // 添加数据对话框是否展示的标记
       dialogVisible: false,
       // 品牌模型数据
-      searchEmp: {
+      searchCourse: {
         name: "",
-        gender: "",
+        serialNumber: "",
+        week: "",
       },
-      emp: {
-        image: "",
+      course: {
+        classId: "",
+        location: "",
       },
-      deptList: [],
-      genderList: [{id: 1,name: "男"},{id: 2,name: "女"}],
+      teacherList: [],
+      classList: [],
+      weekList: [{ id: 1, name: "周一" }, { id: 2, name: "周二" },{ id: 3, name: "周三" },{ id: 4, name: "周四" },{ id: 5, name: "周五" }],
       beginTime: "",
       endTime: "",
-      entrydate: "",
+      timePeriod: "",
 
       // 被选中的id数组
       selectedIds: [],
@@ -201,18 +205,17 @@ export default {
       multipleSelection: [],
       // 表格数据
       tableData: [],
-      token: {token: getToken()}
+      token: { token: getToken() }
     };
   },
 
   mounted() {
     this.page(); //当页面加载完成后，发送异步请求，获取数据
     findAll().then((result) => {
-      this.deptList = result.data.data;
+      this.classList = result.data.data;
       // this.deptList.forEach(function(item) {
       //   item.id = parseInt(item.id);
       // });
-      console.log(this.deptList);
     });
   },
 
@@ -220,8 +223,9 @@ export default {
     // 查询分页数据
     page() {
       page(
-        this.searchEmp.name,
-        this.searchEmp.gender,
+        this.searchCourse.name,
+        this.searchCourse.serialNumber,
+        this.searchCourse.week,
         this.beginTime,
         this.endTime,
         this.currentPage,
@@ -243,22 +247,21 @@ export default {
       this.page();
     },
 
-    clear(){
-      this.searchEmp = {name: "", gender: ""};
-      this.beginTime = "",
-        this.endTime = "";
-      this.entrydate = "";
+    clear() {
+      this.searchCourse = { name: "", serialNumber: "" ,week: ""};
+      this.beginTime = "";
+      this.endTime = "";
       this.page();
     },
     // 添加数据
     add() {
       let operator;
 
-      if (this.emp.id) {
+      if (this.course.id) {
         //修改
-        operator = update(this.emp);
+        operator = update(this.course);
       } else {
-        operator = add(this.emp);
+        operator = add(this.course);
       }
 
       operator.then((resp) => {
@@ -266,7 +269,6 @@ export default {
           this.dialogVisible = false;
           this.page();
           this.$message({ message: "恭喜你，保存成功", type: "success" });
-          this.emp = { image: "" };
         } else {
           this.$message.error(resp.data.msg);
         }
@@ -279,13 +281,11 @@ export default {
 
       selectById(id).then((result) => {
         if (result.data.code === 1) {
-          this.emp = result.data.data;
-          console.log(this.emp.gender);
-          this.emp;
+          this.course = result.data.data;
+          this.course;
         }
       });
     },
-
 
     //分页
     handleSizeChange(val) {
@@ -300,92 +300,19 @@ export default {
       this.page();
     },
 
-
-    //删除员工信息
-    deleteById(id){
-      this.$confirm("此操作将删除该数据, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
-        //2. 发送AJAX请求
-        deleteById(id).then((resp) => {
-          if (resp.data.code == 1) {
-            //删除成功
-            this.$message.success("恭喜你，删除成功");
-            this.page();
-          } else {
-            this.$message.error(resp.data.msg);
-          }
-        });
-      }).catch(() => {
-        //用户点击取消按钮
-        this.$message.info("已取消删除");
-      });
-    },
-
-
-    // 批量删除员工信息
-    deleteByIds() {
-      // 弹出确认提示框
-      this.$confirm("此操作将删除该数据, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(() => {
-        //用户点击确认按钮
-        //1. 创建id数组, 从 this.multipleSelection 获取即可
-        for (let i = 0; i < this.multipleSelection.length; i++) {
-          this.selectedIds[i] = this.multipleSelection[i].id;
+    watch: {
+      entrydate(val) {
+        if (val && val.length >= 2) {
+          this.beginTime = val[0];
+          this.endTime = val[1];
+        } else {
+          this.beginTime = "";
+          this.endTime = "";
         }
-
-        //2. 发送AJAX请求
-        deleteById(this.selectedIds).then((resp) => {
-          if (resp.data.code == "1") {
-            //删除成功
-            this.$message.success("恭喜你，删除成功");
-            this.page();
-          } else {
-            this.$message.error(resp.data.msg);
-          }
-        });
-      }).catch(() => {
-        //用户点击取消按钮
-        this.$message.info("已取消删除");
-      });
+      },
     },
-
-
-    //文件上传相关
-    handleAvatarSuccess(res, file) {
-      this.emp.image = res.data;
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
-      if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
-      }
-      return isJPG && isLt2M;
-    },
-  },
-
-
-  watch: {
-    entrydate(val) {
-      if (val && val.length >= 2) {
-        this.beginTime = val[0];
-        this.endTime = val[1];
-      } else {
-        this.beginTime = "";
-        this.endTime = "";
-      }
-    },
-  },
-};
+  }
+}
 </script>
 <style>
 .avatar-uploader .el-upload {
