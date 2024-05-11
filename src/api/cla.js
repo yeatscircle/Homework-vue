@@ -36,3 +36,10 @@ export function selectById(id) {
     method: 'get'
   })
 }
+
+export function getClass() {
+  return request({
+    url: '/cla/Rep',
+    method: 'get'
+  })
+}

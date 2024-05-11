@@ -45,4 +45,19 @@ export function getAll() {
     method: 'get',
   })
 }
+export function getEmpGender() {
+  return request({
+    url: '/emps/Repo',
+    method: 'get',
+  })
+}
+
+export function getDeptCount() {
+  return request({
+    url: '/emps/Rep',
+    method: 'get',
+  })
+}
+
+
 

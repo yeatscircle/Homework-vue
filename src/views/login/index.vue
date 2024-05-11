@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-container" >
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
@@ -146,6 +146,10 @@ $cursor: #fff;
 
 /* reset element-ui css */
 .login-container {
+  width: 100%;
+  height: 100vh;
+  background: url('../../assets/background.jpg') no-repeat;
+  background-size: cover;
   .el-input {
     display: inline-block;
     height: 47px;

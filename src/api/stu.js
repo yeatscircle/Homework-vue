@@ -37,3 +37,10 @@ export function selectById(id) {
   })
 }
 
+export function getStuGender() {
+  return request({
+    url: '/stu/Repo',
+    method: 'get'
+  })
+}
+

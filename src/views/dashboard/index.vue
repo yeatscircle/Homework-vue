@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-     <img src="@/assets/HIT.jpeg" width="100%" height=1180>
+     <img src="@/assets/HomePage.jpg" width="100%" height=1180>
   </div>
 </template>
 

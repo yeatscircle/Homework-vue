@@ -59,12 +59,12 @@
     <!-- 新建对话框 -->
 
     <el-dialog title="保存课程" :visible.sync="dialogFormVisible">
-      <el-form :model="course">
+      <el-form :model="course" ref="courseForm">
         <el-form-item label="课程名称" :label-width="formLabelWidth">
           <el-input v-model="course.name" placeholder="请输入课程名称" autocomplete="off"></el-input>
         </el-form-item>
 
-        <el-form-item label="课程序号" :label-width="formLabelWidth">
+        <el-form-item label="课程序号" :label-width="formLabelWidth" prop="serialNumber" :rules="serialNumberRules">
           <el-input v-model="course.serialNumber" placeholder="请输入课程序号" autocomplete="off"></el-input>
         </el-form-item>
 
@@ -75,7 +75,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="add()">确 定</el-button>
+        <el-button type="primary" @click="submitForm">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -86,6 +86,19 @@ import { findAll, add, update, deleteById, selectById } from '@/api/course.js'
 
 export default {
   data() {
+    // 自定义课程序号验证规则
+    // 自定义课程序号验证规则
+    const validateSerialNumber = (rule, value, callback) => {
+      const serialNumberPattern = /^[A-Za-z]{2}\d{7}$/;
+      if (value === '') {
+        callback(new Error('请输入课程序号'));
+      } else if (!serialNumberPattern.test(value)) {
+        callback(new Error('课程序号必须是9位,前两位是字母,后7位是数字'));
+      } else {
+        callback();
+      }
+    };
+
     return {
       formLabelWidth: '120px',
       dialogFormVisible: false, // 控制对话框是否可见
@@ -94,7 +107,10 @@ export default {
         serialNumber: '',
         location: ''
       },
-      tableData: []
+      tableData: [],
+      serialNumberRules: [
+        { validator: validateSerialNumber, trigger: 'blur', required: true }
+      ],
     }
   },
 
@@ -125,6 +141,17 @@ export default {
           message: '已取消删除'
         })
       })
+    },
+
+    submitForm() {
+      this.$refs.courseForm.validate((valid) => {
+        if (valid) {
+          this.add();
+        } else {
+          console.log('表单验证失败,无法提交!');
+          return false;
+        }
+      });
     },
 
     //根据ID查询部门 -- 回显
