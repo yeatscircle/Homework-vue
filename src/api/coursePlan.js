@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function page(name,serialNumber,week,begin,end,page,pageSize) {
+export function page(name, serialNumber, week, page, pageSize) {
   return request({
-    url: '/course/plan?name='+name+'&serial_number='+serialNumber+'&week='+week+'&begin='+begin+'&end='+end+'&page='+page+'&pageSize='+pageSize,
+    url: '/course/plan?name=' + name + '&serial_number=' + serialNumber + '&week=' + week + '&page=' + page + '&pageSize=' + pageSize,
     method: 'get'
   })
 }

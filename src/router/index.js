@@ -31,7 +31,7 @@ export const constantRoutes = [
   },
 
   {
-    path: '/example',
+    path: '/stu',
     component: Layout,
     redirect: '/example',
     name: 'Example',
@@ -80,14 +80,14 @@ export const constantRoutes = [
     meta: { title: '课程信息管理', icon: 'el-icon-s-tools' },
     children: [
       {
-        path: 'course-management',
+        path: 'management',
         name: 'course-management',
         component: () => import('@/views/course'),
         meta: { title: '课程管理', icon: 'el-icon-menu' }
       },
       {
-        path: 'emp',
-        name: 'Emp',
+        path: 'plan',
+        name: 'course/plan',
         component: () => import('@/views/course_plan'),
         meta: { title: '课程安排', icon: 'el-icon-user-solid' }
       }

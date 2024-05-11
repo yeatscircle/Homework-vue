@@ -15,6 +15,16 @@
           <el-option label="女" value="2"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item label="班级">
+        <el-select v-model="searchStu.cla" placeholder="请选择">
+          <el-option
+            v-for="classInfo in ClassList"
+            :key="classInfo.id"
+            :label="classInfo.name"
+            :value="classInfo.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
 
       <el-form-item label="入学时间">
         <el-date-picker
@@ -190,6 +200,7 @@ export default {
       searchStu: {
         name: "",
         gender: "",
+        cla: "",
       },
       stu: {
         image: "",
@@ -238,6 +249,7 @@ export default {
       page(
         this.searchStu.name,
         this.searchStu.gender,
+        this.searchStu.cla,
         this.beginTime,
         this.endTime,
         this.currentPage,
@@ -263,9 +275,9 @@ export default {
     },
 
     clear(){
-      this.searchStu = {name: "", gender: ""};
-      this.beginTime = "",
-        this.endTime = "";
+      this.searchStu = {name: "", gender: "",cla: ""};
+      this.beginTime = "";
+      this.endTime = "";
       this.entrydate = "";
       this.page();
     },

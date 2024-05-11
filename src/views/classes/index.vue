@@ -90,7 +90,7 @@ export default {
 
   methods: {
 
-    //删除部门
+    // 删除部门
     deleteById(id) {
       this.$confirm('确认删除?', '提示', {
         confirmButtonText: '确定',
@@ -106,7 +106,7 @@ export default {
           } else {
             this.$message.error(result.data.msg)
           }
-          //重新查询数据
+          // 重新查询数据
           this.init()
         })
       }).catch(() => {
@@ -116,8 +116,8 @@ export default {
         })
       })
     },
-
-    //根据ID查询部门 -- 回显
+    //
+    // 根据ID查询部门 -- 回显
     selectById(id) {
       this.dialogFormVisible = true
       selectById(id).then((result) => {
@@ -125,19 +125,19 @@ export default {
       })
     },
 
-    //保存方法
+    // 保存方法
     add() {
       let method// 添加
       if (this.cla.id) {
         method = update(this.cla) // 修改
       } else {
-        method = add(this.cla) //添加
+        method = add(this.cla) // 添加
       }
       method.then((result) => {
-        if (result.data.code == 1) {
-          //修改成功
+        if (result.data.code === 1) {
+          // 修改成功
           this.$message.success('恭喜你，保存成功')
-          //重新查询数据
+          // 重新查询数据
           this.init()
         } else {
           this.$message.error(result.data.msg)
@@ -150,18 +150,18 @@ export default {
       this.dept = {}
     },
 
-    //初始化 - 查询全部
+    // 初始化 - 查询全部
     init() {
       findAll().then((result) => {
         console.log(result)
-        if (result.data.code == 1) {
+        if (result.data.code === 1) {
           this.tableData = result.data.data
         }
       })
     }
   },
   mounted() {
-    //当页面加载完成后自动执行。
+    // 当页面加载完成后自动执行。
     this.init()
   }
 }

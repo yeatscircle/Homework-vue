@@ -39,3 +39,10 @@ export function selectById(id) {
   })
 }
 
+export function getAll() {
+  return request({
+    url: '/emps/all',
+    method: 'get',
+  })
+}
+

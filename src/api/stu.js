@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function page(name,gender,begin,end,page,pageSize) {
+export function page(name, gender, cla, begin, end, page, pageSize) {
   return request({
-    url: '/stu?name='+name+'&gender='+gender+'&begin='+begin+'&end='+end+'&page='+page+'&pageSize='+pageSize,
+    url: '/stu?name=' + name + '&gender=' + gender + '&cla=' + cla + '&begin=' + begin + '&end=' + end + '&page=' + page + '&pageSize=' + pageSize,
     method: 'get'
   })
 }
@@ -23,19 +23,17 @@ export function update(stu) {
   })
 }
 
-
 export function deleteById(id) {
   return request({
-    url: '/stu/'+id,
-    method: 'delete',
+    url: '/stu/' + id,
+    method: 'delete'
   })
 }
 
-
 export function selectById(id) {
   return request({
-    url: '/stu/'+id,
-    method: 'get',
+    url: '/stu/' + id,
+    method: 'get'
   })
 }
 

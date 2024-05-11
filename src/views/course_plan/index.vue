@@ -26,20 +26,6 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="开课时间">
-        <el-time-picker
-          is-range
-          v-model="timePeriod"
-          range-separator="至"
-          start-placeholder="开始时间"
-          end-placeholder="结束时间"
-          placeholder="选择时间范围"
-          style="width: 400px; margin-left: 20px"
-          format="HH:mm"
-          value-format="HH:mm"
-        ></el-time-picker>
-      </el-form-item>
-
       <el-form-item>
         <el-button type="primary" @click="onSubmit">查询</el-button>
         <el-button type="info" @click="clear">清空</el-button>
@@ -84,15 +70,17 @@
         </el-form-item>
 
         <el-form-item label="授课老师">
-          <el-select v-model="course.teacherLst" placeholder="请选择" style="width:100%">
-            <!--            <el-option label="学工部" value="1"></el-option>-->
-            <!--            <el-option label="教研部" value="2"></el-option>-->
+          <el-select
+            v-model="course.teachers"
+            multiple
+            placeholder="请选择"
+            style="width:100%">
             <el-option
-              v-for="item in teacherLst"
-              :key="item.value"
-              :label="item.name"
-              :value="item.id"
-            />
+              v-for="teacher in teacherList"
+              :key="teacher.id"
+              :label="teacher.name"
+              :value="teacher.id">
+            </el-option>
           </el-select>
         </el-form-item>
 
@@ -123,10 +111,28 @@
         <el-table-column type="selection" width="55"  align="center"></el-table-column>
         <el-table-column  prop="name"  label="课程名称"  align="center"></el-table-column>
         <el-table-column  prop="serialNumber"  label="课程序号"  align="center"></el-table-column>
-        <el-table-column  prop="name"  label="授课老师"  align="center"></el-table-column>
-        <el-table-column  prop="classId"  label="授课班级"  align="center"></el-table-column>
-        <el-table-column  prop="week"  label="授课时间"  align="center"></el-table-column>
-        <el-table-column  prop="timePeriod"  label="授课时段"  align="center"></el-table-column>
+<!--        <el-table-column label="授课教师" align="center">-->
+<!--          <template v-slot="scope">-->
+<!--            &lt;!&ndash; 假设每行数据都需要显示授课教师 &ndash;&gt;-->
+<!--            {{ teachersNames }}-->
+<!--          </template>-->
+<!--        </el-table-column>-->
+
+        <el-table-column label="授课教师" align="center">
+          <template slot-scope="scope">
+            {{ getTeacherNames(scope.row.teachers) }}
+          </template>
+        </el-table-column>
+
+        <el-table-column  prop="classId"  label="授课班级"  align="center"  :formatter="formatClassName"></el-table-column>
+        <el-table-column
+          prop="week"
+          label="授课时间"
+          align="center">
+          <template slot-scope="scope">
+            {{ formatWeekDay(scope.row, scope.column, scope.row.week) }}
+          </template>
+        </el-table-column>        <el-table-column  prop="timePeriod"  label="授课时段"  align="center"></el-table-column>
         <el-table-column  prop="location"  label="授课地点"  align="center"></el-table-column>
 
 
@@ -139,7 +145,6 @@
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click="update(scope.row.id)">编辑</el-button>
-            <el-button type="danger" size="small" @click="deleteById(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -162,15 +167,11 @@
 <script>
 import { page, update,selectById,add} from "@/api/coursePlan.js";
 import { findAll } from "@/api/cla.js";
+import { getAll } from "@/api/emp.js";
 import { getToken } from '@/utils/auth';
 import course from '@/views/course/index.vue'
 
 export default {
-  computed: {
-    course() {
-      return course
-    }
-  },
   data() {
     return {
       background: true,
@@ -192,11 +193,10 @@ export default {
         classId: "",
         location: "",
       },
+      teachers:[],
       teacherList: [],
       classList: [],
       weekList: [{ id: 1, name: "周一" }, { id: 2, name: "周二" },{ id: 3, name: "周三" },{ id: 4, name: "周四" },{ id: 5, name: "周五" }],
-      beginTime: "",
-      endTime: "",
       timePeriod: "",
 
       // 被选中的id数组
@@ -208,6 +208,21 @@ export default {
       token: { token: getToken() }
     };
   },
+  computed: {
+    classMap() {
+      const map = {};
+      this.classList.forEach(item => {
+        map[item.id] = item.name;
+      });
+      return map;
+    },
+    teachersNames() {
+      console.log(this.teachers);
+      const names = this.teachers.map(item => this.getTeacherName(item)).join(', ');
+      console.log('Current teachersNames:', names); // 在控制台输出当前的 teachersNames 值
+      return names;
+    }
+  },
 
   mounted() {
     this.page(); //当页面加载完成后，发送异步请求，获取数据
@@ -217,28 +232,64 @@ export default {
       //   item.id = parseInt(item.id);
       // });
     });
+    getAll().then((result) => {
+      this.teacherList = result.data.data;
+      // console.log(result.data.data);
+    })
   },
 
   methods: {
+    // 显示周几
+    formatWeekDay(row, column, value) {
+      const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      return weekdays[value] || value;
+    },
     // 查询分页数据
     page() {
       page(
         this.searchCourse.name,
         this.searchCourse.serialNumber,
         this.searchCourse.week,
-        this.beginTime,
-        this.endTime,
         this.currentPage,
         this.pageSize
       ).then((res) => {
         this.totalCount = res.data.data.total;
         this.tableData = res.data.data.records;
+
+        // 聚合所有课程的教师信息
+        this.teachers = this.tableData.reduce((acc, course) => {
+          if (course.teachers) {
+            acc.push(...course.teachers);
+          }
+          return acc;
+        }, []);
+        console.log('Updated teachers:', this.teachers);
       });
+    },
+    getTeacherNames(teacherIds) {
+      if (!teacherIds || teacherIds.length === 0) {
+        return '';
+      }
+      const names = teacherIds.map(id => {
+        const teacher = this.teacherList.find(t => t.id === id);
+        return teacher ? teacher.name : '未知';
+      });
+      return names.join(', ');
     },
 
     // 复选框选中后执行的方法
     handleSelectionChange(val) {
       this.multipleSelection = val;
+    },
+
+    formatClassName(row) {
+      return this.classMap[row.classId];
+    },
+
+    getTeacherName(teacherId) {
+      const teacher = this.teacherList.find(t => t.id === teacherId);
+      console.log("Looking for teacher ID:", teacherId, "Found:", teacher);
+      return teacher ? teacher.name : '未知';
     },
 
     // 查询方法
@@ -249,8 +300,6 @@ export default {
 
     clear() {
       this.searchCourse = { name: "", serialNumber: "" ,week: ""};
-      this.beginTime = "";
-      this.endTime = "";
       this.page();
     },
     // 添加数据
@@ -298,18 +347,6 @@ export default {
       // 重新设置当前页码
       this.currentPage = val;
       this.page();
-    },
-
-    watch: {
-      entrydate(val) {
-        if (val && val.length >= 2) {
-          this.beginTime = val[0];
-          this.endTime = val[1];
-        } else {
-          this.beginTime = "";
-          this.endTime = "";
-        }
-      },
     },
   }
 }
