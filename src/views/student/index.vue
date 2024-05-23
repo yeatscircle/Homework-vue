@@ -285,7 +285,6 @@ export default {
     add() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          alert('表单验证成功，提交数据!');
 
           // 只有当表单验证通过时，才进行下一步操作
           let operator;
